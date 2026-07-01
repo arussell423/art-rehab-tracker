@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>ART Rehab Tracker</title>
+<meta name="theme-color" content="#9CAA73" />
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  --bg:#f7f7f4;
+  --card:#ffffff;
+  --text:#2f3724;
+  --muted:#687059;
+  --line:#e3e6dc;
+  --brand:#9CAA73;
+  --brand-dark:#7f8d5d;
+  --brand-soft:#eef1e6;
+  --green:#e5f2df;
+  --amber:#fff3d8;
+  --red:#fde5e1;
+  --blue:#dce9fb;
+  --purple:#eadff7;
+  --shadow:0 6px 18px rgba(47,55,36,.07);
+  --radius:20px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+.app{max-width:1260px;margin:0 auto;padding:22px 18px 120px}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  margin-bottom:16px;
+}
+.brand{
+  display:flex;align-items:center;gap:16px;
+}
+.brand img{height:68px;width:auto;display:block}
+.welcome{font-size:1.7rem;font-weight:800;margin:0}
+.welcome-sub{margin:4px 0 0;color:var(--muted)}
+.datebox{
+  border:1px solid var(--line);background:#fff;border-radius:18px;padding:14px 18px;
+  font-weight:700;box-shadow:var(--shadow)
+}
+.tabs{
+  display:flex;gap:10px;overflow:auto;position:sticky;top:0;background:linear-gradient(180deg,var(--bg),rgba(247,247,244,.94));
+  padding:10px 0 14px;z-index:10;margin-bottom:6px
+}
+.tab{
+  border:1px solid var(--line);background:#fff;color:var(--text);border-radius:999px;
+  padding:12px 16px;min-height:46px;font:inherit;font-weight:800;white-space:nowrap;cursor:pointer
+}
+.tab.active{background:var(--brand);border-color:var(--brand);color:#fff}
+.panel{display:none}
+.panel.active{display:block}
+.dashboard-grid{
+  display:grid;grid-template-columns:repeat(12,1fr);gap:14px;
+}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;
+}
+.span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-4{grid-column:span 4}
+.span-3{grid-column:span 3}.span-6{grid-column:span 6}
+.kpi{
+  display:flex;gap:14px;align-items:center;
+}
+.kpi .icon{
+  width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-size:1.35rem;font-weight:800
+}
+.kpi .label{color:var(--muted);font-size:.92rem;margin-bottom:6px}
+.kpi .value{font-size:1.9rem;font-weight:800;line-height:1}
+.progressbar{
+  height:8px;border-radius:999px;background:#ecefe6;margin-top:14px;overflow:hidden
+}
+.progressbar > div{height:100%;border-radius:999px;background:var(--brand)}
+.card h2{margin:0 0 12px;font-size:1.15rem}
+.card h3{margin:0 0 10px;font-size:1rem}
+.muted{color:var(--muted)}
+.metric{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.metric:last-child{border-bottom:0}
+.dayline{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.dayline:last-child{border-bottom:0}
+.dayleft{display:flex;align-items:center;gap:12px}
+.dot{
+  width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:800
+}
+.tag{display:inline-block;padding:8px 12px;border-radius:999px;font-size:.9rem;font-weight:800}
+.green{background:var(--green)} .amber{background:var(--amber)} .red{background:var(--red)}
+.section{border:1px solid var(--line);border-radius:18px;padding:14px;background:#fff;margin-top:12px}
+.block-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.block{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff}
+.pairlabel{display:inline-block;font-size:.78rem;font-weight:800;color:var(--brand-dark);background:var(--brand-soft);padding:4px 8px;border-radius:999px;margin-bottom:8px}
+.exercise{padding:8px 0;border-bottom:1px solid var(--line)}
+.exercise:last-child{border-bottom:0}
+label{display:block;font-size:.88rem;color:var(--muted);margin-bottom:6px}
+input,select,textarea{
+  width:100%;border:1px solid var(--line);border-radius:14px;padding:13px 14px;
+  min-height:48px;font:inherit;background:#fff
+}
+textarea{min-height:96px;resize:vertical}
+.grid2,.grid3{display:grid;gap:12px}
+.grid2{grid-template-columns:1fr 1fr}
+.grid3{grid-template-columns:1fr 1fr 1fr}
+button{
+  border:0;border-radius:14px;min-height:48px;padding:12px 16px;font:inherit;font-weight:800;cursor:pointer
+}
+.primary{background:var(--brand);color:#fff}
+.secondary{background:#fff;border:1px solid var(--line);color:var(--text)}
+.btnrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+table{width:100%;border-collapse:collapse;font-size:.94rem}
+th,td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--muted)}
+.chart{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;align-items:end;min-height:190px}
+.barcol{display:flex;flex-direction:column;align-items:center;gap:8px}
+.bar{width:100%;max-width:46px;min-height:6px;border-radius:12px 12px 4px 4px;background:linear-gradient(180deg,var(--brand),#c9d4a7)}
+.checklist{display:grid;gap:8px}
+.checkitem{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.checkitem.done{background:#f7fbf4;border-color:#d8e7c8}
+.checkitem input[type=checkbox]{width:22px;height:22px;min-height:auto;margin:0}
+.footer{
+  position:fixed;left:0;right:0;bottom:0;background:rgba(247,247,244,.96);border-top:1px solid var(--line);
+  padding:10px 14px calc(10px + env(safe-area-inset-bottom))
+}
+.footerin{max-width:1260px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media (max-width:980px){
+  .span-8,.span-4,.span-6,.span-3{grid-column:span 12}
+}
+@media (max-width:700px){
+  .grid2,.grid3,.btnrow,.footerin,.block-grid{grid-template-columns:1fr}
+  .topbar{flex-direction:column;align-items:flex-start}
+  .brand{align-items:flex-start}
+  .brand img{height:58px}
+  .welcome{font-size:1.35rem}
+  .app{padding-bottom:190px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <img src="logo-header.png" alt="ART logo">
+      <div>
+        <h1 class="welcome">Welcome back!</h1>
+        <p class="welcome-sub">Stay consistent, trust the process.</p>
+      </div>
+    </div>
+    <div class="datebox" id="dateRange"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-panel="dashboard" type="button">Dashboard</button>
+    <button class="tab" data-panel="workouts" type="button">Workouts</button>
+    <button class="tab" data-panel="log" type="button">Log Session</button>
+    <button class="tab" data-panel="progress" type="button">Progress</button>
+    <button class="tab" data-panel="schedule" type="button">Schedule</button>
+    <button class="tab" data-panel="checkoff" type="button">Check-Off</button>
+  </div>
+
+  <section id="dashboard" class="panel active">
+    <div class="dashboard-grid">
+      <div class="card span-3">
+        <div class="kpi">
+          <div class="icon" style="background:var(--brand-soft)">📅</div>
+          <div>
+            <div class="label">Sessions This Week</div>
+            <div class="value" id="sessionsWeek">0 / 5</div>
+          </div>
+        </div>
+        <div class="progressbar"><div id="sessionsBar" style="width:0%"></div></div>
+      </div>
+
+      <div class="card span-3">
+        <div class="kpi">
+          <div class="icon" style="background:#e7eef9">▦</div>
+          <div>
+            <div class="label">Compliance</div>
+            <div class="value" id="compliance">0%</div>
+          </div>
+        </div>
+        <div class="progressbar"><div id="complianceBar" style="width:0%;background:#4f83c2"></div></div>
+      </div>
+
+      <div class="card span-3">
+        <div class="kpi">
+          <div class="icon" style="background:#fff4d7">↗</div>
+          <div>
+            <div class="label">Avg Pain Score</div>
+            <div class="value" id="avgPainKpi">—</div>
+          </div>
+        </div>
+        <div class="progressbar"><div id="painBar" style="width:0%;background:#efb000"></div></div>
+      </div>
+
+      <div class="card span-3">
+        <div class="kpi">
+          <div class="icon" style="background:#edf4e4">👟</div>
+          <div>
+            <div class="label">Avg Steps / Day</div>
+            <div class="value" id="avgStepsKpi">—</div>
+          </div>
+        </div>
+        <div class="progressbar"><div id="stepsBar" style="width:0%"></div></div>
+      </div>
+
+      <div class="card span-8">
+        <h2>Weekly Traffic-Light Recommendation</h2>
+        <div id="trafficLightBox"></div>
+      </div>
+
+      <div class="card span-4">
+        <h2>This Week’s Schedule</h2>
+        <div id="scheduleCompact"></div>
+      </div>
+
+      <div class="card span-6">
+        <h2>Recent Sessions</h2>
+        <div id="entryTable"></div>
+      </div>
+
+      <div class="card span-6">
+        <h2>Pain Trend</h2>
+        <div id="chartBox" class="chart"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="workouts" class="panel">
+    <div class="card">
+      <h2>Workout Details</h2>
+      <label for="workoutPicker">Choose session</label>
+      <select id="workoutPicker">
+        <option>Strength Day 1</option><option>Strength Day 2</option><option>Strength Day 3</option>
+      </select>
+      <div id="workoutView" style="margin-top:12px"></div>
+    </div>
+  </section>
+
+  <section id="log" class="panel">
+    <div class="card">
+      <h2>Log Session</h2>
+      <div class="grid3">
+        <div><label>Week</label><input id="week" type="number" min="1" max="52" value="1"></div>
+        <div><label>Day</label><select id="daySel"></select></div>
+        <div><label>Session type</label><select id="sessionType">
+          <option>Strength</option><option>Swim</option><option>Bike Steady</option><option>Bike Threshold</option><option>Bike Intervals</option><option>Steps / Mobility</option>
+        </select></div>
+      </div>
+      <div class="grid3" style="margin-top:12px">
+        <div><label>RDL weight (kg)</label><input id="rdl" type="number" step="0.5" placeholder="25"></div>
+        <div><label>Squat weight (kg)</label><input id="squat" type="number" step="0.5" placeholder="15"></div>
+        <div><label>Pain (0–10)</label><input id="pain" type="number" min="0" max="10" step="1" placeholder="0"></div>
+      </div>
+      <div class="grid3" style="margin-top:12px">
+        <div><label>Readiness</label><input id="readiness" type="text" readonly></div>
+        <div><label>Action</label><input id="action" type="text" readonly></div>
+        <div><label>Steps</label><input id="steps" type="number" step="100" placeholder="10000"></div>
+      </div>
+      <div style="margin-top:12px"><label>Notes</label><textarea id="notes" placeholder="Stiffness, pinching, balance, wins, changes..."></textarea></div>
+      <div class="btnrow"><button class="primary" id="saveEntry" type="button">Save Session</button><button class="secondary" id="clearEntry" type="button">Clear Form</button></div>
+    </div>
+  </section>
+
+  <section id="progress" class="panel">
+    <div class="card">
+      <h2>8-Week Progression Plan</h2>
+      <table><thead><tr><th>Week</th><th>Focus</th><th>RDL</th><th>Squat</th><th>Notes</th></tr></thead><tbody>
+        <tr><td>1</td><td>Control</td><td>25</td><td>15</td><td>3 sec lowering, no pain, no compensation</td></tr>
+        <tr><td>2</td><td>Control</td><td>25</td><td>15</td><td>Improve balance and symmetry</td></tr>
+        <tr><td>3</td><td>Load</td><td>27.5</td><td>17.5</td><td>Only if pain ≤3 and no next-day flare</td></tr>
+        <tr><td>4</td><td>Stabilise</td><td>27.5</td><td>17.5</td><td>No load increase, improve depth/control</td></tr>
+        <tr><td>5</td><td>Volume</td><td>27.5</td><td>17.5</td><td>+2 reps instead of more load</td></tr>
+        <tr><td>6</td><td>Load</td><td>30</td><td>20</td><td>Should feel manageable, not grindy</td></tr>
+        <tr><td>7</td><td>Single-leg</td><td>30</td><td>20</td><td>Add light single-leg load, no heavy jump</td></tr>
+        <tr><td>8</td><td>Deload</td><td>25–27</td><td>17–18</td><td>Reduce volume and load 10–15%</td></tr>
+      </tbody></table>
+    </div>
+  </section>
+
+  <section id="schedule" class="panel">
+    <div class="card">
+      <h2>Weekly Schedule</h2>
+      <div id="weeklySchedule"></div>
+    </div>
+  </section>
+
+  <section id="checkoff" class="panel">
+    <div class="card">
+      <h2>Exercise Check-Off</h2>
+      <p class="muted">This saves automatically on your device.</p>
+      <label for="checkPicker">Choose session</label>
+      <select id="checkPicker">
+        <option>Strength Day 1</option><option>Strength Day 2</option><option>Strength Day 3</option>
+      </select>
+      <div id="checklistView" style="margin-top:12px"></div>
+      <div class="btnrow"><button class="secondary" id="clearChecks" type="button">Clear This Checklist</button><button class="primary" id="markDone" type="button">Mark All Done</button></div>
+    </div>
+  </section>
+</div>
+
+<div class="footer">
+  <div class="footerin">
+    <button class="secondary" id="exportBtn" type="button">Export Data</button>
+    <button class="secondary" id="importBtn" type="button">Import Data</button>
+    <button class="secondary" id="resetBtn" type="button">Reset All</button>
+  </div>
+  <input id="importFile" type="file" accept=".json,application/json" style="display:none">
+</div>
+
+<script>
+(function(){
+  const STORAGE="artRehabTrackerV2", CHECKS="artRehabTrackerChecksV2";
+  const days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+  const workoutMap={Monday:"Strength Day 1",Wednesday:"Strength Day 2",Friday:"Strength Day 3"};
+  const schedule={
+    Monday:"Strength Day 1 + Easy Swim",
+    Tuesday:"Bike (Steady) + Mobility",
+    Wednesday:"Strength Day 2",
+    Thursday:"Swim (Easy) or Rest + Mobility",
+    Friday:"Strength Day 3",
+    Saturday:"Bike (Moderate)",
+    Sunday:"Recovery / Mobility + Lower Steps"
+  };
+  const workouts={
+    "Strength Day 1":{warmup:["Mobility","Bike 5 min","Banded Walks"],block1:{A:["BB RDL x 8 @ 25kg","Chins x 8","OH Marches x 8/side @ 4kg"],B:["SA Shoulder Press x 8/side @ 8kg","Static Lunge Rotations x 10/side","SA Row x 8/side @ 12kg"]},block2:{C:["Goblet Squat x 10 @ 15kg","Side Plank Clams x 10/side","SL RDL x 6/side BW"],D:["Deadbugs Banded x 10/side","Calf Raises x 12/side @ 8kg","SL Hip Bridges x 6/side BW"]},stretch:["Full body stretches"]},
+    "Strength Day 2":{warmup:["Mobility","Bike 5 min","Banded Walks"],block1:{A:["BB RDL x 8 @ 25kg","SA Cable Pulldown x 8/side @ 7kg","Ecc Step Downs x 8/side BW"],B:["SA Chest Press x 10/side @ 10kg","Static Lunge Rotations x 10/side","Inverted Row x 12"]},block2:{C:["Goblet Squat x 10 @ 15kg","Side Plank + Leg Raise x 10/side","SL RDL x 6/side BW"],D:["Bird Dogs Banded x 10/side","Bent Knee Calf Raises x 12/side @ 8kg","SL Hip Bridges x 6/side BW"]},stretch:["Full body stretches"]},
+    "Strength Day 3":{warmup:["Mobility","Bike 5 min","Banded Walks"],block1:{A:["BB RDL x 8 @ 25kg","Seated Row x 8 @ 15kg","Lateral Lunge → Knee Drive x 8/side BW"],B:["Press Ups x 12","Static Lunge Clocks x 3/side @ 3kg","Face Pulls x 12"]},block2:{C:["Goblet Squat x 10 @ 15kg","Plank Pulls x 10/side @ 8kg","SL RDL x 6/side BW"],D:["Pull Ups x 5","Calf Raises x 12/side @ 8kg","Hip Bridge Marches"]},stretch:["Full body stretches"]}
+  };
+  function todayName(){return new Date().toLocaleDateString(undefined,{weekday:"long"});}
+  function weekRangeText(){
+    const now = new Date();
+    const day = now.getDay();
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - ((day + 6) % 7));
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    const opts={month:'short', day:'numeric'};
+    return monday.toLocaleDateString(undefined,opts) + " – " + sunday.toLocaleDateString(undefined,opts);
+  }
+  function readiness(p){const n=Number(p); if(Number.isNaN(n)) return {label:"",klass:"",action:""}; if(n<=2) return {label:"Green",klass:"green",action:"Progress"}; if(n<=4) return {label:"Amber",klass:"amber",action:"Hold / repeat"}; return {label:"Red",klass:"red",action:"Reduce load"};}
+  function getEntries(){try{return JSON.parse(localStorage.getItem(STORAGE)||"[]")}catch(e){return []}}
+  function setEntries(v){localStorage.setItem(STORAGE,JSON.stringify(v))}
+  function getChecks(){try{return JSON.parse(localStorage.getItem(CHECKS)||"{}")}catch(e){return {}}}
+  function setChecks(v){localStorage.setItem(CHECKS,JSON.stringify(v))}
+  function avg(arr){const nums=arr.filter(v=>typeof v==="number"&&!Number.isNaN(v)); return nums.length?nums.reduce((a,b)=>a+b,0)/nums.length:null}
+  function pairBlock(label,items){return "<div class='block'><div class='pairlabel'>"+label+"</div>"+items.map(i=>"<div class='exercise'>"+i+"</div>").join("")+"</div>"}
+  function currentWeekNum(){return Number(document.getElementById("week").value||1)}
+
+  function renderDateRange(){document.getElementById("dateRange").textContent = weekRangeText();}
+
+  function renderSchedule(){
+    const t=todayName();
+    const compactIcons={Monday:["🏋️","var(--brand-soft)"],Tuesday:["🚴","var(--blue)"],Wednesday:["🏋️","var(--brand-soft)"],Thursday:["🏊","var(--blue)"],Friday:["🏋️","var(--brand-soft)"],Saturday:["🚴","var(--blue)"],Sunday:["🧘","var(--purple)"]};
+    document.getElementById("weeklySchedule").innerHTML = days.map(d => {
+      const icon=compactIcons[d][0], bg=compactIcons[d][1];
+      return "<div class='dayline'><div class='dayleft'><div class='dot' style='background:"+bg+"'>"+icon+"</div><div><strong>"+d+"</strong><div class='muted'>"+schedule[d]+"</div></div></div><div>"+(d===t?"●":"○")+"</div></div>";
+    }).join("");
+    document.getElementById("scheduleCompact").innerHTML = days.map(d => {
+      const icon=compactIcons[d][0], bg=compactIcons[d][1];
+      return "<div class='dayline'><div class='dayleft'><div style='width:40px'>"+d.slice(0,3)+"</div><div class='dot' style='background:"+bg+"'>"+icon+"</div><div>"+schedule[d]+"</div></div><div>"+(d===t?"✅":"○")+"</div></div>";
+    }).join("");
+  }
+
+  function renderWorkout(name){
+    const w=workouts[name];
+    document.getElementById("workoutView").innerHTML =
+      "<div class='section'><h3>Warm-Up</h3>"+w.warmup.map(i=>"<div class='exercise'>"+i+"</div>").join("")+"</div>"+
+      "<div class='section'><h3>Block 1 — 2 to 3 Rounds</h3><div class='block-grid'>"+pairBlock("A",w.block1.A)+pairBlock("B",w.block1.B)+"</div></div>"+
+      "<div class='section'><h3>Block 2 — 2 to 3 Rounds</h3><div class='block-grid'>"+pairBlock("C",w.block2.C)+pairBlock("D",w.block2.D)+"</div></div>"+
+      "<div class='section'><h3>Stretch</h3>"+w.stretch.map(i=>"<div class='exercise'>"+i+"</div>").join("")+"</div>";
+  }
+
+  function renderChecklist(name){
+    const w=workouts[name], saved=getChecks()[name]||{};
+    const makeGroup=(title,items,prefix)=>"<div class='section'><h3>"+title+"</h3><div class='checklist'>"+items.map((item,idx)=>{const key=prefix+'_'+idx; const checked=!!saved[key]; return "<label class='checkitem "+(checked?"done":"")+"'><input type='checkbox' data-key='"+key+"' "+(checked?"checked":"")+"><div>"+item+"</div></label>"}).join("")+"</div></div>";
+    document.getElementById("checklistView").innerHTML=
+      makeGroup("Warm-Up",w.warmup,"warmup")+makeGroup("Block 1A",w.block1.A,"b1a")+makeGroup("Block 1B",w.block1.B,"b1b")+makeGroup("Block 2C",w.block2.C,"b2c")+makeGroup("Block 2D",w.block2.D,"b2d")+makeGroup("Stretch",w.stretch,"stretch");
+    Array.from(document.querySelectorAll("#checklistView input[type=checkbox]")).forEach(cb=>cb.addEventListener("change",function(){this.closest(".checkitem").classList.toggle("done",this.checked); saveChecklistState(name);}));
+  }
+
+  function saveChecklistState(name){
+    const all=getChecks(); all[name]={};
+    Array.from(document.querySelectorAll("#checklistView input[type=checkbox]")).forEach(cb=>{all[name][cb.dataset.key]=cb.checked;});
+    setChecks(all);
+  }
+
+  function bindTabs(){
+    Array.from(document.querySelectorAll(".tab")).forEach(btn=>btn.addEventListener("click",function(){
+      const panel=this.dataset.panel;
+      Array.from(document.querySelectorAll(".tab")).forEach(b=>b.classList.remove("active"));
+      Array.from(document.querySelectorAll(".panel")).forEach(p=>p.classList.remove("active"));
+      this.classList.add("active");
+      document.getElementById(panel).classList.add("active");
+      window.scrollTo({top:0,behavior:"smooth"});
+    }));
+  }
+
+  function bindPain(){
+    document.getElementById("pain").addEventListener("input",function(){
+      const r=readiness(this.value);
+      const read=document.getElementById("readiness"), act=document.getElementById("action");
+      read.value=r.label; act.value=r.action; read.className=r.klass; act.className=r.klass;
+    });
+  }
+
+  function renderEntries(){
+    const entries=getEntries();
+    if(!entries.length){document.getElementById("entryTable").innerHTML="<div class='muted'>No entries yet.</div>"; return;}
+    document.getElementById("entryTable").innerHTML =
+      "<table><thead><tr><th>Date</th><th>Type</th><th>RDL</th><th>Squat</th><th>Pain</th></tr></thead><tbody>" +
+      entries.slice(0,8).map(e => "<tr><td>"+e.day+" · W"+e.week+"</td><td>"+e.sessionType+"</td><td>"+(e.rdl||"")+"</td><td>"+(e.squat||"")+"</td><td>"+(e.pain ?? "")+"/10</td></tr>").join("") +
+      "</tbody></table>";
+  }
+
+  function getWeekSummary(week){
+    const entries=getEntries().filter(e=>e.week===week);
+    const avgPain=avg(entries.map(e=>e.pain).filter(v=>typeof v==="number"&&!Number.isNaN(v)));
+    let green=0, amber=0, red=0;
+    entries.forEach(e=>{if(e.readiness==="Green") green++; else if(e.readiness==="Amber") amber++; else if(e.readiness==="Red") red++;});
+    let color="amber", text="Hold and repeat", detail="Not enough data yet.", suggestion="Keep things steady.";
+    if(entries.length){
+      if(red>0){
+        color="red"; text="Regress slightly";
+        detail="At least one red entry was logged this week.";
+        suggestion="Reduce load 10–20%, keep to 2 rounds max, and trim any provoking movement range.";
+      } else if(amber >= green){
+        color="amber"; text="Hold and repeat";
+        detail="Your week looks mixed or slightly irritable.";
+        suggestion="Keep the same weights and volume. Focus on tempo, control, and no next-day flare-ups.";
+      } else {
+        color="green"; text="Progress carefully";
+        detail="Great job. Your pain and training response look good this week.";
+        suggestion="Choose one only: add 1–2 reps, add 2–2.5 kg on a main lift, or move from 2 rounds to 3.";
+      }
+    }
+    return {entries,avgPain,green,amber,red,color,text,detail,suggestion};
+  }
+
+  function renderTrafficLight(){
+    const s=getWeekSummary(currentWeekNum());
+    document.getElementById("trafficLightBox").innerHTML =
+      "<div class='grid2'>" +
+        "<div class='section' style='display:flex;align-items:center;justify-content:center;min-height:220px;background:var(--brand-soft)'>" +
+          "<div style='text-align:center'><div class='tag "+s.color+"' style='font-size:1.1rem'>"+s.color.toUpperCase()+"</div><div style='font-size:2rem;font-weight:800;margin-top:14px'>"+s.text+"</div></div>" +
+        "</div>" +
+        "<div>" +
+          "<div class='metric'><span>Current week</span><strong>Week "+currentWeekNum()+"</strong></div>" +
+          "<div class='metric'><span>Entries logged</span><strong>"+s.entries.length+"</strong></div>" +
+          "<div class='metric'><span>Average pain</span><strong>"+(s.avgPain==null?"—":s.avgPain.toFixed(1)+"/10")+"</strong></div>" +
+          "<div class='metric'><span>Green / Amber / Red</span><strong>"+s.green+" / "+s.amber+" / "+s.red+"</strong></div>" +
+          "<div class='section'><h3>Your Next Step</h3><div>"+s.detail+"</div><ul><li>"+s.suggestion+"</li></ul></div>" +
+        "</div>" +
+      "</div>";
+  }
+
+  function renderDashboard(){
+    const entries=getEntries();
+    const weekEntries=entries.filter(e=>e.week===currentWeekNum());
+    const targetSessions=5;
+    const sessions=weekEntries.length;
+    const compliance=Math.min(100, Math.round((sessions/targetSessions)*100));
+    const avgPain=avg(weekEntries.map(e=>e.pain));
+    const avgSteps=avg(weekEntries.map(e=>e.steps));
+    document.getElementById("sessionsWeek").textContent = sessions + " / " + targetSessions;
+    document.getElementById("sessionsBar").style.width = Math.min(100,(sessions/targetSessions)*100) + "%";
+    document.getElementById("compliance").textContent = compliance + "%";
+    document.getElementById("complianceBar").style.width = compliance + "%";
+    document.getElementById("avgPainKpi").textContent = avgPain == null ? "—" : avgPain.toFixed(1) + " / 10";
+    document.getElementById("painBar").style.width = avgPain == null ? "0%" : Math.min(100, (avgPain/10)*100) + "%";
+    document.getElementById("avgStepsKpi").textContent = avgSteps == null ? "—" : Math.round(avgSteps).toLocaleString();
+    document.getElementById("stepsBar").style.width = avgSteps == null ? "0%" : Math.min(100, (avgSteps/12000)*100) + "%";
+    renderTrafficLight();
+    renderChart();
+  }
+
+  function renderChart(){
+    const entries=getEntries();
+    const weekly=[]; 
+    for(let w=1; w<=8; w++){
+      const vals=entries.filter(e=>e.week===w&&typeof e.pain==="number").map(e=>e.pain);
+      weekly.push(avg(vals) || 0);
+    }
+    const max = Math.max(4, ...weekly, 1);
+    document.getElementById("chartBox").innerHTML = weekly.map((v,i)=>
+      "<div class='barcol'><div class='bar' style='height:"+(((v/max)*145)+6)+"px'></div><div>"+(v?v.toFixed(1)+"/10":"—")+"</div><strong>W"+(i+1)+"</strong></div>"
+    ).join("");
+  }
+
+  function saveEntry(){
+    const entry={id:Date.now(),week:Number(document.getElementById("week").value||1),day:document.getElementById("daySel").value,sessionType:document.getElementById("sessionType").value,rdl:document.getElementById("rdl").value?Number(document.getElementById("rdl").value):"",squat:document.getElementById("squat").value?Number(document.getElementById("squat").value):"",pain:document.getElementById("pain").value?Number(document.getElementById("pain").value):"",steps:document.getElementById("steps").value?Number(document.getElementById("steps").value):"",notes:document.getElementById("notes").value.trim(),createdAt:new Date().toISOString()};
+    const r=readiness(entry.pain); entry.readiness=r.label; entry.action=r.action;
+    const entries=getEntries(); entries.unshift(entry); setEntries(entries);
+    renderEntries(); renderDashboard(); clearEntry(); alert("Session saved.");
+  }
+
+  function clearEntry(){
+    ["rdl","squat","pain","steps","notes","readiness","action"].forEach(id=>{document.getElementById(id).value="";document.getElementById(id).className="";});
+  }
+
+  function exportData(){
+    const payload={entries:getEntries(),checks:getChecks()};
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="art-rehab-tracker-export.json"; a.click(); URL.revokeObjectURL(a.href);
+  }
+
+  function importData(file){
+    const reader=new FileReader();
+    reader.onload=function(e){
+      try{
+        const data=JSON.parse(e.target.result);
+        if(Array.isArray(data.entries)) setEntries(data.entries);
+        if(data.checks&&typeof data.checks==="object") setChecks(data.checks);
+        renderEntries(); renderDashboard(); renderChecklist(document.getElementById("checkPicker").value);
+        alert("Data imported.");
+      }catch(err){alert("Could not import that file.");}
+    };
+    reader.readAsText(file);
+  }
+
+  function init(){
+    bindTabs(); bindPain(); renderDateRange(); renderSchedule();
+    const t=todayName();
+    document.getElementById("daySel").innerHTML=days.map(d=>"<option "+(d===t?"selected":"")+">"+d+"</option>").join("");
+    const defaultWorkout=workoutMap[t]||"Strength Day 1";
+    document.getElementById("workoutPicker").value=defaultWorkout;
+    document.getElementById("checkPicker").value=defaultWorkout;
+    renderWorkout(defaultWorkout);
+    renderChecklist(defaultWorkout);
+    renderEntries();
+    renderDashboard();
+
+    document.getElementById("workoutPicker").addEventListener("change",function(){renderWorkout(this.value);});
+    document.getElementById("checkPicker").addEventListener("change",function(){renderChecklist(this.value);});
+    document.getElementById("week").addEventListener("input",renderDashboard);
+    document.getElementById("clearChecks").addEventListener("click",function(){
+      const name=document.getElementById("checkPicker").value; const all=getChecks(); all[name]={}; setChecks(all); renderChecklist(name);
+    });
+    document.getElementById("markDone").addEventListener("click",function(){
+      const name=document.getElementById("checkPicker").value; const all=getChecks(); all[name]={};
+      Array.from(document.querySelectorAll("#checklistView input[type=checkbox]")).forEach(cb=>{cb.checked=true; cb.closest(".checkitem").classList.add("done"); all[name][cb.dataset.key]=true;});
+      setChecks(all);
+    });
+    document.getElementById("saveEntry").addEventListener("click",saveEntry);
+    document.getElementById("clearEntry").addEventListener("click",clearEntry);
+    document.getElementById("exportBtn").addEventListener("click",exportData);
+    document.getElementById("importBtn").addEventListener("click",function(){document.getElementById("importFile").click();});
+    document.getElementById("importFile").addEventListener("change",function(){if(this.files&&this.files[0]) importData(this.files[0]);});
+    document.getElementById("resetBtn").addEventListener("click",function(){
+      if(!confirm("Delete all saved logs and checklist progress on this device?")) return;
+      localStorage.removeItem(STORAGE); localStorage.removeItem(CHECKS);
+      renderEntries(); renderDashboard(); renderChecklist(document.getElementById("checkPicker").value);
+    });
+    if('serviceWorker' in navigator){navigator.serviceWorker.register('./service-worker.js').catch(()=>{});}
+  }
+  init();
+})();
+</script>
+</body>
+</html>
