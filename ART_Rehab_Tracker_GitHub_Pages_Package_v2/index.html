@@ -11,12 +11,12 @@
 :root{
   --bg:#f7f7f4;
   --card:#ffffff;
-  --text:#2f3724;
-  --muted:#687059;
-  --line:#e3e6dc;
-  --brand:#9CAA73;
-  --brand-dark:#7f8d5d;
-  --brand-soft:#eef1e6;
+  --text:#213333;
+  --muted:#64706f;
+  --line:#dde7e4;
+  --brand:#0F4C4C;
+  --brand-dark:#0A3939;
+  --brand-soft:#EAF3F1;
   --green:#e5f2df;
   --amber:#fff3d8;
   --red:#fde5e1;
@@ -138,6 +138,15 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
   .welcome{font-size:1.35rem}
   .app{padding-bottom:190px}
 }
+
+.alertbox{border-left:5px solid var(--brand);background:#fbfcfa;border-radius:16px;padding:14px;margin-top:12px}
+.guardrail{display:grid;gap:8px}.guardrail div{padding:10px 12px;border-radius:14px;background:var(--brand-soft);font-weight:700}
+.smallnote{font-size:.84rem;color:var(--muted);line-height:1.35}
+.pillrow{display:flex;flex-wrap:wrap;gap:8px}.pill{padding:8px 10px;border-radius:999px;background:var(--brand-soft);font-weight:800;font-size:.86rem}
+input[type=checkbox].inlinecheck{width:20px;height:20px;min-height:auto;margin-right:8px;vertical-align:middle}
+
+.toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 14px;border-radius:999px;box-shadow:0 12px 24px rgba(13,35,33,.22);font-weight:800;font-size:.85rem;z-index:50;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease}.toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+.storage-warning{background:#fff4e6;border:1px solid #ffd8a8;color:#7a3e00;border-radius:14px;padding:12px;margin:12px 0;font-weight:700}
 </style>
 </head>
 <body>
@@ -147,7 +156,7 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
       <img src="logo-header.png" alt="ART logo">
       <div>
         <h1 class="welcome">Welcome back!</h1>
-        <p class="welcome-sub">Stay consistent, trust the process.</p>
+        <p class="welcome-sub">Microfracture-safe tracking: steady load, quiet hip, clear trends.</p>
       </div>
     </div>
     <div class="datebox" id="dateRange"></div>
@@ -157,6 +166,7 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
     <button class="tab active" data-panel="dashboard" type="button">Dashboard</button>
     <button class="tab" data-panel="workouts" type="button">Workouts</button>
     <button class="tab" data-panel="log" type="button">Log Session</button>
+    <button class="tab" data-panel="daily" type="button">Daily Check</button>
     <button class="tab" data-panel="progress" type="button">Progress</button>
     <button class="tab" data-panel="schedule" type="button">Schedule</button>
     <button class="tab" data-panel="checkoff" type="button">Check-Off</button>
@@ -214,6 +224,21 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
       </div>
 
       <div class="card span-4">
+        <h2>Surgeon Guardrails</h2>
+        <div class="guardrail">
+          <div>👟 Max 7,000 steps in 24 hrs</div>
+          <div>🚫 No running / plyometrics until December rescan</div>
+          <div>✅ Cycle, swim, full-body resistance 2–3×/week</div>
+          <div>💊 Etoricoxib: 3 days on / 4 days off weekly if prescribed</div>
+        </div>
+      </div>
+
+      <div class="card span-4">
+        <h2>Today’s Recovery Status</h2>
+        <div id="dailyStatusBox"></div>
+      </div>
+
+      <div class="card span-4">
         <h2>This Week’s Schedule</h2>
         <div id="scheduleCompact"></div>
       </div>
@@ -235,7 +260,7 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
       <h2>Workout Details</h2>
       <label for="workoutPicker">Choose session</label>
       <select id="workoutPicker">
-        <option>Strength Day 1</option><option>Strength Day 2</option><option>Strength Day 3</option>
+        <option>Strength 1 — Squat + Stability</option><option>Strength 2 — Hinge + Upper</option><option>Strength 3 — Recovery Strength</option><option>Strength 4 — Upper + Hip Control</option><option>Strength 5 — Athletic Foundation</option>
       </select>
       <div id="workoutView" style="margin-top:12px"></div>
     </div>
@@ -266,18 +291,54 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
     </div>
   </section>
 
+
+  <section id="daily" class="panel">
+    <div class="card">
+      <h2>Daily Recovery Check</h2>
+      <p class="muted">Use this once per day. The goal is to spot trends, not obsess over every symptom.</p>
+      <div class="grid3">
+        <div><label>Date</label><input id="dailyDate" type="date"></div>
+        <div><label>Morning pain (0–10)</label><input id="amPain" type="number" min="0" max="10" step="1"></div>
+        <div><label>Evening pain (0–10)</label><input id="pmPain" type="number" min="0" max="10" step="1"></div>
+      </div>
+      <div class="grid3" style="margin-top:12px">
+        <div><label>Groin/front crease (0–10)</label><input id="groinPain" type="number" min="0" max="10" step="1"></div>
+        <div><label>C-sign/deep hip (0–10)</label><input id="cPain" type="number" min="0" max="10" step="1"></div>
+        <div><label>Hip flexor/adductor (0–10)</label><input id="flexorPain" type="number" min="0" max="10" step="1"></div>
+      </div>
+      <div class="grid3" style="margin-top:12px">
+        <div><label>Steps today</label><input id="dailySteps" type="number" step="100" placeholder="0–7000"></div>
+        <div><label>Bike minutes</label><input id="bikeMins" type="number" step="1"></div>
+        <div><label>Swim / pool minutes</label><input id="poolMins" type="number" step="1"></div>
+      </div>
+      <div class="grid3" style="margin-top:12px">
+        <div><label>Limp / guarding?</label><select id="limp"><option>No</option><option>Slight</option><option>Yes</option></select></div>
+        <div><label>Next-day response</label><select id="response"><option>Same/better</option><option>Slightly worse &lt;24h</option><option>Worse &gt;24h</option></select></div>
+        <div><label>Confidence walking (0–10)</label><input id="confidence" type="number" min="0" max="10" step="1"></div>
+      </div>
+      <div class="section">
+        <label><input class="inlinecheck" id="restPain" type="checkbox"> Pain at rest today</label>
+        <label><input class="inlinecheck" id="wakingPain" type="checkbox"> Woke with hip pain</label>
+        <label><input class="inlinecheck" id="etoricoxib" type="checkbox"> Etoricoxib taken today</label>
+      </div>
+      <div><label>Notes</label><textarea id="dailyNotes" placeholder="Triggers, wins, what helped, what to ask surgeon/physio..."></textarea></div>
+      <div class="btnrow"><button class="primary" id="saveDaily" type="button">Save Daily Check</button><button class="secondary" id="clearDaily" type="button">Clear</button></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h2>Recent Daily Checks</h2>
+      <div id="dailyTable"></div>
+    </div>
+  </section>
+
   <section id="progress" class="panel">
     <div class="card">
-      <h2>8-Week Progression Plan</h2>
+      <h2>Microfracture-Safe Progression Plan</h2>
       <table><thead><tr><th>Week</th><th>Focus</th><th>RDL</th><th>Squat</th><th>Notes</th></tr></thead><tbody>
-        <tr><td>1</td><td>Control</td><td>25</td><td>15</td><td>3 sec lowering, no pain, no compensation</td></tr>
-        <tr><td>2</td><td>Control</td><td>25</td><td>15</td><td>Improve balance and symmetry</td></tr>
-        <tr><td>3</td><td>Load</td><td>27.5</td><td>17.5</td><td>Only if pain ≤3 and no next-day flare</td></tr>
-        <tr><td>4</td><td>Stabilise</td><td>27.5</td><td>17.5</td><td>No load increase, improve depth/control</td></tr>
-        <tr><td>5</td><td>Volume</td><td>27.5</td><td>17.5</td><td>+2 reps instead of more load</td></tr>
-        <tr><td>6</td><td>Load</td><td>30</td><td>20</td><td>Should feel manageable, not grindy</td></tr>
-        <tr><td>7</td><td>Single-leg</td><td>30</td><td>20</td><td>Add light single-leg load, no heavy jump</td></tr>
-        <tr><td>8</td><td>Deload</td><td>25–27</td><td>17–18</td><td>Reduce volume and load 10–15%</td></tr>
+        <tr><td>1–2</td><td>Calm baseline</td><td>RPE 6</td><td>Box depth</td><td>Keep pain same/better next morning. No impact.</td></tr>
+        <tr><td>3–4</td><td>Capacity</td><td>+1 variable only</td><td>Controlled</td><td>Increase either reps, load or time — never all three.</td></tr>
+        <tr><td>5–6</td><td>Strength consistency</td><td>RPE 6–7</td><td>No grind</td><td>Full body 2–3×/week, step cap still rules.</td></tr>
+        <tr><td>7–8</td><td>Deload / review</td><td>-10–20%</td><td>Easy</td><td>Use if waking pain, rest pain, limp or C-sign pain increases.</td></tr>
+        <tr><td>Until Dec</td><td>Protect microfracture</td><td>No impact</td><td>No running</td><td>Cycle, swim and lift within surgeon limits.</td></tr>
       </tbody></table>
     </div>
   </section>
@@ -295,7 +356,7 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
       <p class="muted">This saves automatically on your device.</p>
       <label for="checkPicker">Choose session</label>
       <select id="checkPicker">
-        <option>Strength Day 1</option><option>Strength Day 2</option><option>Strength Day 3</option>
+        <option>Strength 1 — Squat + Stability</option><option>Strength 2 — Hinge + Upper</option><option>Strength 3 — Recovery Strength</option><option>Strength 4 — Upper + Hip Control</option><option>Strength 5 — Athletic Foundation</option>
       </select>
       <div id="checklistView" style="margin-top:12px"></div>
       <div class="btnrow"><button class="secondary" id="clearChecks" type="button">Clear This Checklist</button><button class="primary" id="markDone" type="button">Mark All Done</button></div>
@@ -303,6 +364,7 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
   </section>
 </div>
 
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
 <div class="footer">
   <div class="footerin">
     <button class="secondary" id="exportBtn" type="button">Export Data</button>
@@ -314,22 +376,24 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
 
 <script>
 (function(){
-  const STORAGE="artRehabTrackerV2", CHECKS="artRehabTrackerChecksV2";
+  const STORAGE="artRehabTrackerV3", CHECKS="artRehabTrackerChecksV3", DAILY="artRehabDailyV3";
   const days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
-  const workoutMap={Monday:"Strength Day 1",Wednesday:"Strength Day 2",Friday:"Strength Day 3"};
+  const workoutMap={Monday:"Strength 1 — Squat + Stability",Wednesday:"Strength 2 — Hinge + Upper",Friday:"Strength 3 — Recovery Strength"};
   const schedule={
-    Monday:"Strength Day 1 + Easy Swim",
-    Tuesday:"Bike (Steady) + Mobility",
-    Wednesday:"Strength Day 2",
-    Thursday:"Swim (Easy) or Rest + Mobility",
-    Friday:"Strength Day 3",
-    Saturday:"Bike (Moderate)",
-    Sunday:"Recovery / Mobility + Lower Steps"
+    Monday:"Strength 1 — Squat + Stability",
+    Tuesday:"Bike + Movement Snacks",
+    Wednesday:"Strength 2 — Hinge + Upper",
+    Thursday:"Swim / Pool + Recovery",
+    Friday:"Strength 3 — Recovery Strength",
+    Saturday:"Optional Strength 4 or Bike",
+    Sunday:"Recovery / Low Steps"
   };
   const workouts={
-    "Strength Day 1":{warmup:["Mobility","Bike 5 min","Banded Walks"],block1:{A:["BB RDL x 8 @ 25kg","Chins x 8","OH Marches x 8/side @ 4kg"],B:["SA Shoulder Press x 8/side @ 8kg","Static Lunge Rotations x 10/side","SA Row x 8/side @ 12kg"]},block2:{C:["Goblet Squat x 10 @ 15kg","Side Plank Clams x 10/side","SL RDL x 6/side BW"],D:["Deadbugs Banded x 10/side","Calf Raises x 12/side @ 8kg","SL Hip Bridges x 6/side BW"]},stretch:["Full body stretches"]},
-    "Strength Day 2":{warmup:["Mobility","Bike 5 min","Banded Walks"],block1:{A:["BB RDL x 8 @ 25kg","SA Cable Pulldown x 8/side @ 7kg","Ecc Step Downs x 8/side BW"],B:["SA Chest Press x 10/side @ 10kg","Static Lunge Rotations x 10/side","Inverted Row x 12"]},block2:{C:["Goblet Squat x 10 @ 15kg","Side Plank + Leg Raise x 10/side","SL RDL x 6/side BW"],D:["Bird Dogs Banded x 10/side","Bent Knee Calf Raises x 12/side @ 8kg","SL Hip Bridges x 6/side BW"]},stretch:["Full body stretches"]},
-    "Strength Day 3":{warmup:["Mobility","Bike 5 min","Banded Walks"],block1:{A:["BB RDL x 8 @ 25kg","Seated Row x 8 @ 15kg","Lateral Lunge → Knee Drive x 8/side BW"],B:["Press Ups x 12","Static Lunge Clocks x 3/side @ 3kg","Face Pulls x 12"]},block2:{C:["Goblet Squat x 10 @ 15kg","Plank Pulls x 10/side @ 8kg","SL RDL x 6/side BW"],D:["Pull Ups x 5","Calf Raises x 12/side @ 8kg","Hip Bridge Marches"]},stretch:["Full body stretches"]}
+    "Strength 1 — Squat + Stability":{warmup:["Bike 8–10 min easy","Pelvic tilts x10","Glute bridge x10","Banded lateral walks x8–10m"],block1:{A:["Goblet squat to box 3x8 (no deep flexion)","DB bench press 3x8–10","Chest-supported row 3x10"],B:["Low step-up 2–3x8/side","Standing calf raise 3x12–15","Pallof press 3x10/side"]},block2:{C:["Supported single-leg balance 3x20–30s","Dead bug 3x8/side","Side-lying hip abduction 2x10/side"],D:["Easy bike cooldown 5 min","Recovery note: same/better next morning = appropriate","No hops, skipping or running"]},stretch:["Movement snacks only — avoid aggressive hip flexor/groin stretching"]},
+    "Strength 2 — Hinge + Upper":{warmup:["Bike 8–10 min easy","Hip hinge patterning x8","Bird dog x8/side","Mini-band walks x8–10m"],block1:{A:["DB/BB RDL 3x6–8 @ RPE 6","Landmine or DB press 3x8","Lat pulldown 3x8–10"],B:["Supported split squat small range 2x6–8/side","Face pull 2–3x12","Suitcase carry 3x20m/side"]},block2:{C:["Short-lever bridge hold 2x8 x 5s","Side plank from knees 2x20s/side","Pallof press 2x10/side"],D:["Optional hamstring curl 2x10 light only if no sit-bone pain","Easy bike cooldown 5 min","Next-day response guides progression"]},stretch:["No forced end range. Gentle mobility only."]},
+    "Strength 3 — Recovery Strength":{warmup:["Bike 10 min zero/light resistance","Breathing + pelvic control 2 min","Glute activation x10"],block1:{A:["Leg press high seat/limited depth 2–3x10 @ easy RPE","Seated row 3x10","Incline DB press 3x10"],B:["Assisted sit-to-stand 2x8","Cable row or band row 2x12","Farmer carry 3x30m easy"]},block2:{C:["Supported single-leg balance 4x20s","Side-lying abduction 2x10","Dead bug 2x8/side"],D:["Pool/swim optional later same day","Evening ice if ache increases","Keep step cap" ]},stretch:["Movement snacks during desk work, not long holds."]},
+    "Strength 4 — Upper + Hip Control":{warmup:["Bike 8 min","Pelvic tilts x10","Bird dogs x8/side"],block1:{A:["DB shoulder press 3x8","Chest-supported row 3x10","Cable pulldown 3x10"],B:["Box squat bodyweight/goblet 2x8","Low lateral step-down 2x6/side","Calf raise 2x15"]},block2:{C:["Pallof press 3x10/side","Suitcase carry 3x20m/side","Side plank knees 2x20s"],D:["Glute bridge 2x8","Optional bike 5–10 min","No impact"]},stretch:["Keep ranges comfortable and mid-range."]},
+    "Strength 5 — Athletic Foundation":{warmup:["Bike 10 min easy","Mini-band lateral walks","Dynamic walking mechanics 3 min"],block1:{A:["Trap bar high-handle deadlift or DB RDL 3x5–6 @ RPE 6","Push-up or DB bench 3x8","Assisted pull-up / pulldown 3x8"],B:["Low box step-up 2x8/side","Supported single-leg RDL 2x6/side light","Pallof step-out 2x8/side"]},block2:{C:["Farmer carry 3x30m","Side-lying abduction 2x10","Dead bug 2x8/side"],D:["Easy cooldown bike 5 min","Log pain areas and next-day response","Stop if gait changes"]},stretch:["No plyometrics, running, skipping or hop tests before December rescan."]}
   };
   function todayName(){return new Date().toLocaleDateString(undefined,{weekday:"long"});}
   function weekRangeText(){
@@ -343,13 +407,71 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
     return monday.toLocaleDateString(undefined,opts) + " – " + sunday.toLocaleDateString(undefined,opts);
   }
   function readiness(p){const n=Number(p); if(Number.isNaN(n)) return {label:"",klass:"",action:""}; if(n<=2) return {label:"Green",klass:"green",action:"Progress"}; if(n<=4) return {label:"Amber",klass:"amber",action:"Hold / repeat"}; return {label:"Red",klass:"red",action:"Reduce load"};}
-  function getEntries(){try{return JSON.parse(localStorage.getItem(STORAGE)||"[]")}catch(e){return []}}
-  function setEntries(v){localStorage.setItem(STORAGE,JSON.stringify(v))}
-  function getChecks(){try{return JSON.parse(localStorage.getItem(CHECKS)||"{}")}catch(e){return {}}}
-  function setChecks(v){localStorage.setItem(CHECKS,JSON.stringify(v))}
+  function toast(msg){
+    const el=document.getElementById('toast');
+    if(!el){alert(msg);return;}
+    el.textContent=msg; el.classList.add('show');
+    clearTimeout(window.__toastTimer); window.__toastTimer=setTimeout(()=>el.classList.remove('show'),2200);
+  }
+  function canUseStorage(){
+    try{const k='artStorageTest'; localStorage.setItem(k,'1'); localStorage.removeItem(k); return true;}catch(e){return false;}
+  }
+  function getJSON(key, fallback){
+    try{const raw=localStorage.getItem(key); return raw?JSON.parse(raw):fallback;}catch(e){return fallback;}
+  }
+  function setJSON(key, value){
+    try{localStorage.setItem(key,JSON.stringify(value)); return true;}
+    catch(e){alert('Save failed. If you are opening this from Files/ZIP preview or private browsing, upload it to GitHub Pages first so Safari can save tracking data.'); return false;}
+  }
+  function getEntries(){return getJSON(STORAGE,[])}
+  function setEntries(v){return setJSON(STORAGE,v)}
+  function getChecks(){return getJSON(CHECKS,{})}
+  function setChecks(v){return setJSON(CHECKS,v)}
+  function getDaily(){return getJSON(DAILY,[])}
+  function setDaily(v){return setJSON(DAILY,v)}
   function avg(arr){const nums=arr.filter(v=>typeof v==="number"&&!Number.isNaN(v)); return nums.length?nums.reduce((a,b)=>a+b,0)/nums.length:null}
   function pairBlock(label,items){return "<div class='block'><div class='pairlabel'>"+label+"</div>"+items.map(i=>"<div class='exercise'>"+i+"</div>").join("")+"</div>"}
   function currentWeekNum(){return Number(document.getElementById("week").value||1)}
+
+
+  function todayISO(){return new Date().toISOString().slice(0,10)}
+  function numVal(id){const v=document.getElementById(id)?.value; return v===''||v==null?null:Number(v)}
+  function dailyReadiness(d){
+    let score=0;
+    const pains=[d.amPain,d.pmPain,d.groinPain,d.cPain,d.flexorPain].filter(v=>typeof v==='number'&&!Number.isNaN(v));
+    const maxPain=pains.length?Math.max(...pains):0;
+    if(maxPain>=5) score+=2; else if(maxPain>=3) score+=1;
+    if(d.restPain) score+=1;
+    if(d.wakingPain) score+=1;
+    if(d.limp==='Yes') score+=2; else if(d.limp==='Slight') score+=1;
+    if(d.response==='Worse >24h') score+=2; else if(d.response==='Slightly worse <24h') score+=1;
+    if((d.steps||0)>7000) score+=2; else if((d.steps||0)>6000) score+=1;
+    if(score>=4) return {color:'red',label:'Red — Recovery Day',advice:'Reduce load 20–30%, no new strength progressions, easy bike/pool only.'};
+    if(score>=2) return {color:'amber',label:'Amber — Hold',advice:'Repeat current plan. Keep steps controlled and avoid provoking flexion/impact.'};
+    return {color:'green',label:'Green — Train As Planned',advice:'Proceed within surgeon limits. Progress only one small variable if tomorrow is also calm.'};
+  }
+  function saveDaily(){
+    const d={id:Date.now(),date:document.getElementById('dailyDate').value||todayISO(),amPain:numVal('amPain'),pmPain:numVal('pmPain'),groinPain:numVal('groinPain'),cPain:numVal('cPain'),flexorPain:numVal('flexorPain'),steps:numVal('dailySteps'),bikeMins:numVal('bikeMins'),poolMins:numVal('poolMins'),limp:document.getElementById('limp').value,response:document.getElementById('response').value,confidence:numVal('confidence'),restPain:document.getElementById('restPain').checked,wakingPain:document.getElementById('wakingPain').checked,etoricoxib:document.getElementById('etoricoxib').checked,notes:document.getElementById('dailyNotes').value.trim(),createdAt:new Date().toISOString()};
+    const r=dailyReadiness(d); d.readiness=r.label; d.color=r.color;
+    let arr=getDaily().filter(x=>x.date!==d.date); arr.unshift(d);
+    if(setDaily(arr.slice(0,365))){
+      renderDaily(); renderDashboard(); clearDaily(); toast('Daily check saved');
+    }
+  }
+  function clearDaily(){['amPain','pmPain','groinPain','cPain','flexorPain','dailySteps','bikeMins','poolMins','confidence','dailyNotes'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';}); ['restPain','wakingPain','etoricoxib'].forEach(id=>{const el=document.getElementById(id); if(el) el.checked=false;}); document.getElementById('dailyDate').value=todayISO(); document.getElementById('limp').value='No'; document.getElementById('response').value='Same/better';}
+  function renderDaily(){
+    const arr=getDaily();
+    const box=document.getElementById('dailyTable'); if(!box) return;
+    if(!arr.length){box.innerHTML='<div class="muted">No daily checks yet.</div>';return;}
+    box.innerHTML='<table><thead><tr><th>Date</th><th>Status</th><th>AM/PM</th><th>Groin/C/Flexor</th><th>Steps</th><th>Notes</th></tr></thead><tbody>'+arr.slice(0,10).map(d=>'<tr><td>'+d.date+'</td><td><span class="tag '+d.color+'">'+(d.color||'')+'</span></td><td>'+show(d.amPain)+' / '+show(d.pmPain)+'</td><td>'+show(d.groinPain)+' / '+show(d.cPain)+' / '+show(d.flexorPain)+'</td><td>'+(d.steps?Number(d.steps).toLocaleString():'—')+'</td><td>'+(d.notes||'')+'</td></tr>').join('')+'</tbody></table>';
+  }
+  function show(v){return v==null||Number.isNaN(v)?'—':v}
+  function renderDailyStatus(){
+    const arr=getDaily(); const box=document.getElementById('dailyStatusBox'); if(!box) return;
+    if(!arr.length){box.innerHTML='<div class="muted">No daily check saved yet today.</div><div class="alertbox">Save a Daily Check to get your traffic-light recommendation.</div>'; return;}
+    const d=arr[0], r=dailyReadiness(d);
+    box.innerHTML='<div class="tag '+r.color+'">'+r.label+'</div><div class="alertbox"><strong>'+r.advice+'</strong></div><div class="metric"><span>Latest steps</span><strong>'+(d.steps?Number(d.steps).toLocaleString():'—')+' / 7,000</strong></div><div class="metric"><span>Rest / waking pain</span><strong>'+(d.restPain?'Rest ':'')+(d.wakingPain?'Waking':'')+'</strong></div><div class="smallnote">Use this as a guide, not a diagnosis. Surgeon restrictions override the app.</div>';
+  }
 
   function renderDateRange(){document.getElementById("dateRange").textContent = weekRangeText();}
 
@@ -473,8 +595,9 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
     document.getElementById("avgPainKpi").textContent = avgPain == null ? "—" : avgPain.toFixed(1) + " / 10";
     document.getElementById("painBar").style.width = avgPain == null ? "0%" : Math.min(100, (avgPain/10)*100) + "%";
     document.getElementById("avgStepsKpi").textContent = avgSteps == null ? "—" : Math.round(avgSteps).toLocaleString();
-    document.getElementById("stepsBar").style.width = avgSteps == null ? "0%" : Math.min(100, (avgSteps/12000)*100) + "%";
+    document.getElementById("stepsBar").style.width = avgSteps == null ? "0%" : Math.min(100, (avgSteps/7000)*100) + "%";
     renderTrafficLight();
+    renderDailyStatus();
     renderChart();
   }
 
@@ -494,8 +617,10 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
   function saveEntry(){
     const entry={id:Date.now(),week:Number(document.getElementById("week").value||1),day:document.getElementById("daySel").value,sessionType:document.getElementById("sessionType").value,rdl:document.getElementById("rdl").value?Number(document.getElementById("rdl").value):"",squat:document.getElementById("squat").value?Number(document.getElementById("squat").value):"",pain:document.getElementById("pain").value?Number(document.getElementById("pain").value):"",steps:document.getElementById("steps").value?Number(document.getElementById("steps").value):"",notes:document.getElementById("notes").value.trim(),createdAt:new Date().toISOString()};
     const r=readiness(entry.pain); entry.readiness=r.label; entry.action=r.action;
-    const entries=getEntries(); entries.unshift(entry); setEntries(entries);
-    renderEntries(); renderDashboard(); clearEntry(); alert("Session saved.");
+    const entries=getEntries(); entries.unshift(entry);
+    if(setEntries(entries)){
+      renderEntries(); renderDashboard(); clearEntry(); toast('Session saved');
+    }
   }
 
   function clearEntry(){
@@ -503,7 +628,7 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
   }
 
   function exportData(){
-    const payload={entries:getEntries(),checks:getChecks()};
+    const payload={entries:getEntries(),checks:getChecks(),daily:getDaily()};
     const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
     const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="art-rehab-tracker-export.json"; a.click(); URL.revokeObjectURL(a.href);
   }
@@ -515,7 +640,8 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
         const data=JSON.parse(e.target.result);
         if(Array.isArray(data.entries)) setEntries(data.entries);
         if(data.checks&&typeof data.checks==="object") setChecks(data.checks);
-        renderEntries(); renderDashboard(); renderChecklist(document.getElementById("checkPicker").value);
+        if(Array.isArray(data.daily)) setDaily(data.daily);
+        renderEntries(); renderDaily(); renderDashboard(); renderChecklist(document.getElementById("checkPicker").value);
         alert("Data imported.");
       }catch(err){alert("Could not import that file.");}
     };
@@ -533,27 +659,34 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
     renderChecklist(defaultWorkout);
     renderEntries();
     renderDashboard();
+    clearDaily(); renderDaily();
+    if(!canUseStorage()){
+      const warn='<div class="storage-warning">Tracking cannot be saved in this browser mode. Use the GitHub Pages URL in Safari, not ZIP preview/Private Browsing.</div>';
+      document.getElementById('dailyStatusBox').insertAdjacentHTML('beforebegin',warn);
+    }
 
     document.getElementById("workoutPicker").addEventListener("change",function(){renderWorkout(this.value);});
     document.getElementById("checkPicker").addEventListener("change",function(){renderChecklist(this.value);});
     document.getElementById("week").addEventListener("input",renderDashboard);
     document.getElementById("clearChecks").addEventListener("click",function(){
-      const name=document.getElementById("checkPicker").value; const all=getChecks(); all[name]={}; setChecks(all); renderChecklist(name);
+      const name=document.getElementById("checkPicker").value; const all=getChecks(); all[name]={}; setChecks(all); renderChecklist(name); toast("Checklist cleared");
     });
     document.getElementById("markDone").addEventListener("click",function(){
       const name=document.getElementById("checkPicker").value; const all=getChecks(); all[name]={};
       Array.from(document.querySelectorAll("#checklistView input[type=checkbox]")).forEach(cb=>{cb.checked=true; cb.closest(".checkitem").classList.add("done"); all[name][cb.dataset.key]=true;});
-      setChecks(all);
+      setChecks(all); toast("Checklist saved");
     });
     document.getElementById("saveEntry").addEventListener("click",saveEntry);
     document.getElementById("clearEntry").addEventListener("click",clearEntry);
+    document.getElementById("saveDaily").addEventListener("click",saveDaily);
+    document.getElementById("clearDaily").addEventListener("click",clearDaily);
     document.getElementById("exportBtn").addEventListener("click",exportData);
     document.getElementById("importBtn").addEventListener("click",function(){document.getElementById("importFile").click();});
     document.getElementById("importFile").addEventListener("change",function(){if(this.files&&this.files[0]) importData(this.files[0]);});
     document.getElementById("resetBtn").addEventListener("click",function(){
       if(!confirm("Delete all saved logs and checklist progress on this device?")) return;
-      localStorage.removeItem(STORAGE); localStorage.removeItem(CHECKS);
-      renderEntries(); renderDashboard(); renderChecklist(document.getElementById("checkPicker").value);
+      localStorage.removeItem(STORAGE); localStorage.removeItem(CHECKS); localStorage.removeItem(DAILY);
+      renderEntries(); renderDaily(); renderDashboard(); renderChecklist(document.getElementById("checkPicker").value); toast("All saved data reset");
     });
     if('serviceWorker' in navigator){navigator.serviceWorker.register('./service-worker.js').catch(()=>{});}
   }

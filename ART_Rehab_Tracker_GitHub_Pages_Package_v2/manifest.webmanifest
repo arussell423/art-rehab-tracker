@@ -1,10 +1,10 @@
 {
-  "name": "ART Rehab Tracker",
+  "name": "ART Rehab Tracker v3",
   "short_name": "ART Rehab",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#f7f7f4",
-  "theme_color": "#9CAA73",
+  "theme_color": "#0F4C4C",
   "icons": [
     {
       "src": "icon-192.png",
